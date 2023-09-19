@@ -1,0 +1,60 @@
+﻿@page "/PendienteDetalles"
+@page "/PendienteDetalles/{id:int}"
+@inject IPendienteService PendienteService
+@inject NavigationManager NavManager
+
+<h1>Detalles del Pendiente</h1>
+
+<EditForm Model="@pendiente">
+    <table class="table">
+        <tr>
+            <td>Pendiente:</td>
+            <td><input class="form-control col-sm-4" type="text" @bind="pendiente.c_nombre" /></td>
+        </tr>
+        <tr>
+            <td>Descripción:</td>
+            <td><input class="form-control col-sm-4" type="text" @bind="pendiente.c_descripcion" /></td>
+        </tr>
+        <tr>
+            <td>Fecha:</td>
+            <td><input class="form-control col-sm-4" type="text" @bind="pendiente.f_createDate" /></td>
+        </tr>
+
+        <tr>
+            <td colspan="2" style="text-align:center;">
+                <input type="submit" value="Save" @onclick="SavePendiente"/>
+                <input type="button" value="Cancel" @onclick="Cancel"/>
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Pendiente pendiente = new Pendiente();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            pendiente = await PendienteService.GetPendienteDetails(id);
+        }
+        else
+        {
+            pendiente.f_createDate = DateTime.Now;
+        }
+    }
+
+    protected async Task SavePendiente()
+    {
+        await PendienteService.SavePendiente(pendiente);
+        NavManager.NavigateTo("/");
+    }
+
+    protected void Cancel()
+    {
+        NavManager.NavigateTo("/");
+    }
+}

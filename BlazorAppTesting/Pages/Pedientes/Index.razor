@@ -1,0 +1,59 @@
+﻿@page "/"
+@inject IPendienteService PendienteService
+
+<h1>Pendientes</h1>
+
+<p>Lista de todos los pendientes</p>
+@Message
+
+<div>
+    <a href="/PendienteDetalles"><i>Agergar Pendiente</i></a>
+</div>
+
+@if (pendientes == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pte in pendientes)
+            {
+                <tr>
+                    <td>@pte.c_nombre</td>
+                    <td>@pte.c_descripcion</td>
+                    <td>@pte.f_createDate</td>
+                    <td><a href="/PendienteDetalles/@pte.PendienteId"><i>Editar</i></a></td>
+                    <td><a href="/PendienteBorrar/@pte.PendienteId"><i>Borar</i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public IEnumerable<Pendiente> pendientes { get; set; }
+    public string Message { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            pendientes = await PendienteService.GetPendientes();
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+        }
+    }
+}
